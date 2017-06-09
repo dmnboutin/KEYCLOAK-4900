@@ -37,6 +37,7 @@ import org.keycloak.forms.login.freemarker.model.TotpBean;
 import org.keycloak.forms.login.freemarker.model.UrlBean;
 import org.keycloak.models.*;
 import org.keycloak.models.utils.FormMessage;
+import org.keycloak.protocol.oidc.OIDCLoginProtocol;
 import org.keycloak.services.Urls;
 import org.keycloak.services.messages.Messages;
 import org.keycloak.theme.BrowserSecurityHeaderSetup;
@@ -142,6 +143,7 @@ public class FreeMarkerLoginFormsProvider implements LoginFormsProvider {
         RealmModel realm = session.getContext().getRealm();
         ClientModel client = session.getContext().getClient();
         UriInfo uriInfo = session.getContext().getUri();
+        String loginHint = uriInfo.getQueryParameters().getFirst(OIDCLoginProtocol.LOGIN_HINT_PARAM);
 
         String requestURI = uriInfo.getBaseUri().getPath();
         UriBuilder uriBuilder = UriBuilder.fromUri(requestURI);
@@ -158,6 +160,9 @@ public class FreeMarkerLoginFormsProvider implements LoginFormsProvider {
 
         if (accessCode != null) {
             uriBuilder.queryParam(OAuth2Constants.CODE, accessCode);
+        }
+        if(loginHint != null) {
+            uriBuilder.queryParam(OIDCLoginProtocol.LOGIN_HINT_PARAM, loginHint);
         }
 
         URI baseUriWithCodeAndClientId = uriBuilder.build();

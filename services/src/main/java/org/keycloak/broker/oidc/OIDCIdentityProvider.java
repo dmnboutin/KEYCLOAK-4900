@@ -17,6 +17,7 @@
 package org.keycloak.broker.oidc;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import static org.keycloak.protocol.oidc.OIDCLoginProtocol.LOGIN_HINT_PARAM;
 import org.jboss.logging.Logger;
 import org.keycloak.broker.oidc.mappers.AbstractJsonUserAttributeMapper;
 import org.keycloak.broker.oidc.util.JsonSimpleHttp;
@@ -209,7 +210,12 @@ public class OIDCIdentityProvider extends AbstractOAuth2IdentityProvider<OIDCIde
         if (prompt != null && !prompt.isEmpty()) {
             authorizationUrl.queryParam(OAUTH2_PARAMETER_PROMPT, prompt);
         }
-
+        
+        String loginHint = request.getUriInfo().getQueryParameters().getFirst(LOGIN_HINT_PARAM);
+        if (getConfig().isLoginHint() && loginHint != null) {
+            authorizationUrl.queryParam(LOGIN_HINT_PARAM, request.getUriInfo().getQueryParameters().getFirst(LOGIN_HINT_PARAM));
+        }
+        
         return authorizationUrl;
     }
 

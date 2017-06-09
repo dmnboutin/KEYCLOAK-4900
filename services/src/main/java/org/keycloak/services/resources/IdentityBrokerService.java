@@ -341,14 +341,16 @@ public class IdentityBrokerService implements IdentityProvider.AuthenticationCal
 
     @POST
     @Path("/{provider_id}/login")
-    public Response performPostLogin(@PathParam("provider_id") String providerId, @QueryParam("code") String code, @QueryParam("client_id") String clientId) {
-        return performLogin(providerId, code, clientId);
+    public Response performPostLogin(@PathParam("provider_id") String providerId, @QueryParam("code") String code,
+            @QueryParam("client_id") String clientId, @QueryParam("login_hint") String loginHint) {
+        return performLogin(providerId, code, clientId, loginHint);
     }
 
     @GET
     @NoCache
     @Path("/{provider_id}/login")
-    public Response performLogin(@PathParam("provider_id") String providerId, @QueryParam("code") String code, @QueryParam("client_id") String clientId) {
+    public Response performLogin(@PathParam("provider_id") String providerId, @QueryParam("code") String code,
+            @QueryParam("client_id") String clientId, @QueryParam("login_hint") String loginHint) {
         this.event.detail(Details.IDENTITY_PROVIDER, providerId);
 
         if (isDebugEnabled()) {

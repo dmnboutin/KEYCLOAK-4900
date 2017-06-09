@@ -109,7 +109,11 @@ public class OIDCIdentityProviderConfig extends OAuth2IdentityProviderConfig {
         getConfig().put("disableUserInfo", String.valueOf(disable));
     }
 
+    public boolean isLoginHint() {
+        return Boolean.valueOf(getConfig().get("loginHint"));
+    }
 
-
-
+    public void setLoginHint(boolean loginHint) {
+        getConfig().put("loginHint", String.valueOf(loginHint));
+    }
 }

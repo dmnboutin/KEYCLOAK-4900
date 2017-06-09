@@ -17,6 +17,9 @@
 
 package org.keycloak.authentication.authenticators.browser;
 
+import java.util.List;
+import javax.ws.rs.core.Response;
+
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.Authenticator;
@@ -25,11 +28,9 @@ import org.keycloak.models.IdentityProviderModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import org.keycloak.protocol.oidc.OIDCLoginProtocol;
 import org.keycloak.services.Urls;
 import org.keycloak.services.managers.ClientSessionCode;
-
-import javax.ws.rs.core.Response;
-import java.util.List;
 
 /**
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
@@ -65,8 +66,10 @@ public class IdentityProviderAuthenticator implements Authenticator {
             if (identityProvider.isEnabled() && providerId.equals(identityProvider.getAlias())) {
                 String accessCode = new ClientSessionCode<>(context.getSession(), context.getRealm(), context.getAuthenticationSession()).getCode();
                 String clientId = context.getAuthenticationSession().getClient().getClientId();
+                String loginHint = context.getUriInfo().getQueryParameters().getFirst(OIDCLoginProtocol.LOGIN_HINT_PARAM);
+
                 Response response = Response.seeOther(
-                        Urls.identityProviderAuthnRequest(context.getUriInfo().getBaseUri(), providerId, context.getRealm().getName(), accessCode, clientId))
+                        Urls.identityProviderAuthnRequest(context.getUriInfo().getBaseUri(), providerId, context.getRealm().getName(), accessCode, clientId, loginHint))
                         .build();
 
                 LOG.debugf("Redirecting to %s", providerId);
